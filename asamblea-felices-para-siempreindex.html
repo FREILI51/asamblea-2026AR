@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Felices Para Siempre – Asamblea 2026</title>
+<style>
+  :root {
+    --verde: #2d6a4f;
+    --verde-claro: #e8f5ee;
+    --verde-medio: #b7dfc8;
+    --naranja: #c96a2a;
+    --azul: #1e5f8e;
+    --text: #1a1a1a;
+    --text-muted: #5a5a5a;
+    --bg: #f7f5f0;
+    --card: #ffffff;
+    --border: #ddd8cc;
+    --nota-bg: #fffbf0;
+    --nota-border: #e6c87a;
+    --radius: 10px;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.6;
+    padding-bottom: 80px;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--verde);
+    color: white;
+    padding: 20px 16px 16px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .header h1 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    line-height: 1.3;
+  }
+  .header p {
+    font-size: 12px;
+    opacity: 0.8;
+    margin-top: 3px;
+  }
+
+  /* TAB NAV */
+  .tabs {
+    display: flex;
+    background: white;
+    border-bottom: 2px solid var(--border);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    position: sticky;
+    top: 72px;
+    z-index: 99;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: 1;
+    min-width: 80px;
+    padding: 10px 4px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .tab.active {
+    color: var(--verde);
+    border-bottom-color: var(--verde);
+  }
+  .tab-verse {
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--text-muted);
+    display: block;
+    margin-top: 1px;
+  }
+
+  /* DAY PANEL */
+  .day-panel { display: none; padding: 12px 12px 0; }
+  .day-panel.active { display: block; }
+
+  /* SESSION BLOCK */
+  .session {
+    margin-bottom: 10px;
+  }
+  .session-header {
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-radius: var(--radius) var(--radius) 0 0;
+    margin-bottom: 1px;
+  }
+  .session-header.manana { background: var(--verde); color: white; }
+  .session-header.tarde { background: var(--naranja); color: white; }
+
+  /* ITEM */
+  .item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: none;
+    padding: 11px 13px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .item:last-child { border-radius: 0 0 var(--radius) var(--radius); }
+  .item:first-child { border-top: 1px solid var(--border); }
+  .item:active { background: #f0f0ea; }
+
+  .item-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .item-time {
+    font-size: 12px;
+    color: var(--text-muted);
+    min-width: 38px;
+    padding-top: 1px;
+    font-variant-numeric: tabular-nums;
+  }
+  .item-body { flex: 1; }
+  .item-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .tag-discurso { color: var(--azul); }
+  .tag-av { color: var(--naranja); }
+  .tag-serie { color: var(--verde); }
+  .tag-bautismo { color: #7b3f9e; }
+  .tag-publico { color: var(--azul); }
+
+  .item-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .item-ref {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .item-bullets {
+    margin-top: 5px;
+    padding-left: 14px;
+  }
+  .item-bullets li {
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 3px;
+    line-height: 1.4;
+  }
+  .item-bullets li span {
+    color: var(--text-muted);
+    font-size: 11px;
+  }
+
+  .note-indicator {
+    font-size: 14px;
+    margin-left: 4px;
+    opacity: 0.7;
+  }
+  .chevron {
+    font-size: 12px;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+    padding-top: 2px;
+  }
+  .item.open .chevron { transform: rotate(90deg); }
+
+  /* NOTE AREA */
+  .note-area {
+    display: none;
+    background: var(--nota-bg);
+    border-top: 1px dashed var(--nota-border);
+    padding: 10px 13px 12px 51px;
+  }
+  .note-area.open { display: block; }
+  .note-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--naranja);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  textarea.nota {
+    width: 100%;
+    min-height: 80px;
+    border: 1px solid var(--nota-border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-family: var(--font);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text);
+    background: white;
+    resize: vertical;
+    outline: none;
+  }
+  textarea.nota:focus {
+    border-color: var(--verde);
+    box-shadow: 0 0 0 2px rgba(45,106,79,0.15);
+  }
+  .note-saved {
+    font-size: 11px;
+    color: var(--verde);
+    margin-top: 4px;
+    display: none;
+  }
+
+  /* ITEMS ESPECIALES */
+  .item-cancion {
+    background: #f8f8f5;
+    border-color: #e0ddd5;
+  }
+  .item-cancion .item-title {
+    font-weight: 400;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  /* BOTTOM BAR */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0; right: 0;
+    background: white;
+    border-top: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+  }
+  .bottom-info {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .btn-clear {
+    font-size: 12px;
+    color: #c0392b;
+    background: none;
+    border: 1px solid #e8c0bc;
+    border-radius: 6px;
+    padding: 5px 12px;
+    cursor: pointer;
+  }
+
+  /* MODAL CONFIRM */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: white;
+    border-radius: 14px;
+    padding: 24px 20px 20px;
+    max-width: 320px;
+    width: 100%;
+    text-align: center;
+  }
+  .modal h3 { font-size: 16px; margin-bottom: 8px; }
+  .modal p { font-size: 13px; color: var(--text-muted); margin-bottom: 18px; }
+  .modal-btns { display: flex; gap: 10px; }
+  .modal-btns button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-cancel-modal { background: #f0f0ea; color: var(--text); }
+  .btn-confirm-modal { background: #c0392b; color: white; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Felices Para Siempre</h1>
+  <p>Asamblea 2026 · Testigos de Jehová</p>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showDay('viernes')">
+    Viernes
+    <span class="tab-verse">Mat. 5:3</span>
+  </div>
+  <div class="tab" onclick="showDay('sabado')">
+    Sábado
+    <span class="tab-verse">Hech. 20:35</span>
+  </div>
+  <div class="tab" onclick="showDay('domingo')">
+    Domingo
+    <span class="tab-verse">Mat. 13:16</span>
+  </div>
+</div>
+
+<!-- ============ VIERNES ============ -->
+<div id="panel-viernes" class="day-panel active">
+
+  <div class="session">
+    <div class="session-header manana">☀️ Mañana</div>
+
+    <div class="item item-cancion">
+      <div class="item-row">
+        <span class="item-time">9:20</span>
+        <div class="item-body"><div class="item-title">Video musical</div></div>
+      </div>
+    </div>
+
+    <div class="item item-cancion">
+      <div class="item-row">
+        <span class="item-time">9:30</span>
+        <div class="item-body"><div class="item-title">Canción 160 y oración</div></div>
+      </div>
+    </div>
+
+    <div class="item" onclick="toggleItem(this, 'v1')">
+      <div class="item-row">
+        <span class="item-time">9:40</span>
+        <div class="item-body">
+          <div class="item-tag tag-discurso">Discurso del Presidente</div>
+          <div class="item-title">¿Es realista la idea de ser felices para siempre? <span class="note-indicator" id="ni-v1"></span></div>
+          <div class="item-ref">Salmo 16:11; 100:2</div>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="note-area" id="na-v1">
+        <div class="note-label">📝 Mis notas</div>
+        <textarea class="nota" id="nota-v1" placeholder="Escribe tus apuntes aquí..." oninput="saveNote('v1')"></textarea>
+        <div class="note-saved" id="saved-v1">✓ Guardado</div>
+      </div>
+    </div>
+
+    <div class="item" onclick="toggleItem(this, 'v2')">
+      <div class="item-row">
+        <span class="item-time">10:10</span>
+        <div class="item-body">
+          <div class="item-tag tag-av">Producción Audiovisual</div>
+          <div class="item-title">Las buenas noticias según Jesús: Ep. 4 — "Para eso he venido" <span class="note-indicator" id="ni-v2"></span></div>
+          <div class="item-ref">Mat. 4:23-25; 8:1-4, 14-17; 9:1-17; 12:1-21; Mar. 1:21-3:19; Luc. 4:31-44; 5:12-6:16; Juan 5:1-47</div>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="note-area" id="na-v2">
+        <div class="note-label">📝 Mis notas</div>
+        <textarea class="nota" id="nota-v2" placeholder="Escribe tus apuntes aquí..." oninput="saveNote('v2')"></textarea>
+        <div class="note-saved" id="saved-v2">✓ Guardado</div>
+      </div>
+    </div>
+
+    <div class="item item-cancion">
+      <div class="item-row">
+        <span class="item-time">11:05</span>
+        <div class="item-body"><div class="item-title">Canción 17 y anuncios</div></div>
+      </div>
+    </div>
+
+    <div class="item" onclick="toggleItem(this, 'v3')">
+      <div class="item-row">
+        <span class="item-time">11:15</span>
+        <div class="item-body">
+          <div class="item-tag tag-serie">Serie de Discursos</div>
+          <div class="item-title">¡Las profecías sobre el Mesías se cumplieron! <span class="note-indicator" id="ni-v3"></span></div>
+          <ul class="item-bullets">
+            <li>"Él mismo tomó nuestras enfermedades" <span>(Mat. 8:16,17; Sal. 32:1,2; Is. 53:4,5)</span></li>
+            <li>"No discutirá" <span>(Mat. 12:15-21; Is. 42:1-4)</span></li>
+            <li>"Nunca les hablaba sin utilizar alguna comparación" <span>(Mat. 13:34,35; Sal. 78:2)</span></li>
+          </ul>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="note-area" id="na-v3">
+        <div class="note-label">📝 Mis notas</div>
+        <textarea class="nota" id="nota-v3" placeholder="Escribe tus apuntes aquí..." oninput="saveNote('v3')"></textarea>
+        <div class="note-saved" id="saved-v3">✓ Guardado</div>
+      </div>
+    </div>
+
+    <div class="item item-cancion">
+      <div class="item-row">
+        <span class="item-time">12:10</span>
+        <div class="item-body"><div class="item-title">Canción 14 e intermedio</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="session">
+    <div class="session-header tarde">🌤️ Tarde</div>
+
+    <div class="item item-cancion">
+      <div class="item-row">
+        <span class="item-time">1:35</span>
+        <div class="item-body"><div class="item-title">Video musical</div></div>
+      </div>
+    </div>
+    <div class="item item-cancion">
+      <div class="item-row">
+        <span class="item-time">1:45</span>
+        <div class="item-body"><div class="item-title">Canción 23</div></div>
+      </div>
+    </div>
+
+    <div class="item" onclick="toggleItem(this, 'v4')">
+      <div class="item-row">
+        <span class="item-time">1:50</span>
+        <div class="item-body">
+          <div class="item-tag tag-discurso">Discurso</div>
+          <div class="item-title">¿Qué enseñó Jesús sobre el sábado? <span class="note-indicator" id="ni-v4"></span></div>
+          <div class="item-ref">Mat. 12:1-14; Juan 5:1-17</div>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="note-area" id="na-v4">
+        <div class="note-label">📝 Mis notas</div>
+        <textarea class="nota" id="nota-v4" placeholder="Escribe tus apuntes aquí..." oninput="saveNote('v4')"></textarea>
+        <div class="note-saved" id="saved-v4">✓ Guardado</div>
+      </div>
+    </div>
+
+    <div class="item" onclick="toggleItem(this, 'v5')">
+      <div class="item-row">
+        <span class="item-time">2:10</span>
+        <div class="item-body">
+          <div class="item-tag tag-serie">Serie de Discursos</div>
+          <div class="item-title">Imitemos a los que sirvieron a Jesús <span class="note-indicator" id="ni-v5"></span></div>
+          <ul class="item-bullets">
+            <li>Los apóstoles <span>(Luc. 6:13,15,16)</span></li>
+            <li>Muchas mujeres <span>(Mat. 27:55; Mar. 15:40; Luc. 8:1-3)</span></li>
+          </ul>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="note-area" id="na-v5">
+        <div class="note-label">📝 Mis notas</div>
+        <textarea class="nota" id="nota-v5" placeholder="Escribe tus apuntes aquí..." oninput="saveNote('v5')"></textarea>
+        <div class="note-saved" id="saved-v5">✓ Guardado</div>
+      </div>
+    </div>
+
+    <div class="item item-cancion">
+      <div class="item-row">
+        <span class="item-time">2:50</span>
+        <div class="item-body"><div class="item-title">Canción 76 y anuncios</div></div>
+      </div>
+    </div>
+
+    <div class="item" onclick="toggleItem(this, 'v6')">
+      <div class="item-row">
+        <span class="item-time">3:00</span>
+        <div class="item-body">
+          <div class="item-tag tag-discurso">Discurso</div>
+          <div class="item-title">"Felices los que lavan sus túnicas largas" <span class="note-indicator" id="ni-v6"></span></div>
+          <div class="item-ref">Ap. 7:9,10,13-15; 22:14; Juan 5:24-29</div>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="note-area" id="na-v6">
+        <div class="note-label">📝 Mis notas</div>
+        <textarea class="nota" id="nota-v6" placeholder="Escribe tus apuntes aquí..." oninput="saveNote('v6')"></textarea>
+        <div class="note-saved" id="saved-v6">✓ Guardado</div>
+      </div>
+    </div>
+
+    <div class="item item-cancion">
+      <div class="item-row">
+        <span class="item-time">3:30</span>
+        <div class="item-body"><div class="item-title">Canción 155 y oración de conclusión</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SÁBADO ============ -->
+<div id="panel-sabado" class="day-panel">
+
+  <div class="session">
+    <div class="session-header manana">☀️ Mañana</div>
+
+    <div class="item item-cancion">
+      <div class="item-row"><span class="item-time">9:20</span><div class="item-body"><div class="item-title">Video musical</div></div></div>
+    </div>
+    <div class="item item-cancion">
+      <div class="item-row"><span class="item-time">9:30</span><div class="item-body"><div class="item-title">Canción 111 y oración</div></div></div>
+    </div>
+
+    <div class="item" onclick="toggleItem(this, 's1')">
+      <div class="item-row">
+        <span class="item-time">9:40</span>
+        <div class="item-body">
+          <div class="item-tag tag-discurso">Discurso</div>
+          <div class="item-title">"Él tomó la palabra y se puso a enseñarles" <span class="note-indicator" id="ni-s1"></span></div>
+          <div class="item-ref">Mat. 5:1,2</div>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="note-area" id="na-s1">
+        <div class="note-label">📝 Mis notas</div>
+        <textarea class="nota" id="nota-s1" placeholder="Escribe tus apuntes aquí..." oninput="saveNote('s1')"></textarea>
+        <div class="note-saved" id="saved-s1">✓ Guardado</div>
+      </div>
+    </div>
+
+    <div class="item" onclick="toggleItem(this, 's2')">
+      <div class="item-row">
+        <span class="item-time">9:50</span>
+        <div class="item-body">
+          <div class="item-tag tag-av">Producción Audiovisual</div>
+          <div class="item-title">Las buenas noticias según Jesús: Ep. 5 — Impactados con su manera de enseñar <span class="note-indicator" id="ni-s2"></span></div>
+          <div class="item-ref">Mat. 5:3-7:29; Luc. 6:17-49</div>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="note-area" id="na-s2">
+        <div class="note-label">📝 Mis notas</div>
+        <textarea class="nota" id="nota-s2" placeholder="Escribe tus apuntes aquí..." oninput="saveNote('s2')"></textarea>
+        <div class="note-saved" id="saved-s2">✓ Guardado</div>
+      </div>
+    </div>
+
+    <div class="item item-cancion">
+      <div class="item-row"><span class="item-time">10:25</span><div class="item-body"><div class="item-title">Canción 89 y anuncios</div></div></div>
+    </div>
+
+    <div class="item" onclick="toggleItem(this, 's3')">
+      <div class="item-row">
+        <span class="item-time">10:35</span>
+        <div class="item-body">
+          <div class="item-tag tag-discurso">Discurso</div>
+          <div class="item-title">Cuatro enemigos de la felicidad <span class="note-indicator" id="ni-s3"></span></div>
+          <div class="item-ref">Luc. 6:24-26</div>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="note-area" id="na-s3">
+        <div class="note-label">📝 Mis notas</div>
+        <textarea class="nota" id="nota-s3" placeholder="Escribe tus apuntes aquí..." oninput="saveNote('s3')"></textarea>
+        <div class="note-saved" id="saved-s3">✓ Guardado</div>
+      </div>
+    </div>
+
+    <div class="item" onclick="toggleItem(this, 's4')">
+      <div class="item-row">
+        <span class="item-time">10:50</span>
+        <div class="item-body">
+          <div class="item-tag tag-discurso">Discurso</div>
+          <div class="item-title">¿Puede ver el principio detrás de la ley? <span class="note-indicator" id="ni-s4"></span></div>
+          <div class="item-ref">Mat. 5:17-48</div>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="note-area" id="na-s4">
+        <div class="note-label">📝 Mis notas</div>
+        <textarea class="nota" id="nota-s4" placeholder="Escribe tus apuntes aquí..." oninput="saveNote('s4')"></textarea>
+        <div class="note-saved" id="saved-s4">✓ Guardado</div>
+      </div>
+    </div>
+
+    <div class="item" onclick="toggleItem(this, 's5')">
+      <div class="item-row">
+        <span class="item-time">11:15</span>
+        <div class="item-body">
+          <div class="item-tag tag-serie">Serie de Discursos</div>
+          <div class="item-title">Lecciones sobre la tierra en la que vivió Jesús <span class="note-indicator" id="ni-s5"></span></div>
+          <ul class="item-bullets">
+            <li>La sal y la luz <span>(Mat. 5:13-16)</span></li>
+            <li>Las plantas y los animales <span>(Gén. 1:28,29; Mat. 6:19,26,28; 7:6,10,15,16)</span></li>
+          </ul>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="note-area" id="na-s5">
+        <div class="note-label">📝 Mis notas</div>
+        <textarea class="nota" id="nota-s5" placeholder="Escribe tus apuntes aquí..." oninput="saveNote('s5')"></textarea>
+        <div class="note-saved" id="saved-s5">✓ Guardado</div>
+      </div>
+    </div>
+
+    <div class="item" onclick="toggleItem(this, 's6')">
+      <div class="item-row">
+        <span class="item-time">11:40</span>
+        <div class="item-body">
+          <div class="item-tag tag-bautismo">Discurso de Bautismo</div>
+          <div class="item-title">"Tu Padre, que mira en secreto, te lo pagará" <span class="note-indicator" id="ni-s6"></span></div>
+          <div class="item-ref">Mat. 6:6</div>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="note-area" id="na-s6">
+        <div class="note-label">📝 Mis notas</div>
+        <textarea class="nota" id="nota-s6" placeholder="Escribe tus apuntes aquí..." oninput="saveNote('s6')"></textarea>
+        <div class="note-saved" id="saved-s6">✓ Guardado</div>
+      </div>
+    </div>
+
+    <div class="item item-cancion">
+      <div class="item-row"><span class="item-time">12:10</span><div class="item-body"><div class="item-title">Canción 51 e intermedio</div></div></div>
+    </div>
+  </div>
+
+  <div class="session">
+    <div class="session-header tarde">🌤️ Tarde</div>
+
+    <div class="item item-cancion">
+      <div class="item-row"><span class="item-time">1:35</span><div class="item-body"><div class="item-title">Video musical</div></div></div>
+    </div>
+    <div class="item item-cancion">
+      <div class="item-row"><span class="item-time">1:45</span><div class="item-body"><div class="item-title">Canción 125</div></div></div>
+    </div>
+
+    <div class="item" onclick="toggleItem(this, 's7')">
+      <div class="item-row">
+        <span class="item-time">1:50</span>
+        <div class="item-body">
+          <div class="item-tag tag-serie">Serie de Discursos</div>
+          <div class="item-title">Felices... (Las Bienaventuranzas) <span class="note-indicator" id="ni-s7"></span></div>
+          <ul class="item-bullets">
+            <li>...los que reconocen sus necesidades espirituales <span>(Mat. 5:3)</span></li>
+            <li>...los que se lamentan <span>(Mat. 5:4)</span></li>
+            <li>...los que son apacibles <span>(Mat. 5:5)</span></li>
+            <li>...los que tienen hambre y sed de justicia <span>(Mat. 5:6)</span></li>
+            <li>...los que son misericordiosos <span>(Mat. 5:7)</span></li>
+            <li>...los que tienen un corazón puro <span>(Mat. 5:8)</span></li>
+            <li>...los que fomentan la paz <span>(Mat. 5:9)</span></li>
+            <li>...los que han sido perseguidos por causa de la justicia <span>(Mat. 5:10)</span></li>
+            <li>...ustedes cuando la gente los insulte <span>(Mat. 5:11,12)</span></li>
+          </ul>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="note-area" id="na-s7">
+        <div class="note-label">📝 Mis notas</div>
+        <textarea class="nota" id="nota-s7" placeholder="Escribe tus apuntes aquí..." oninput="saveNote('s7')"></textarea>
+        <div class="note-saved" id="saved-s7">✓ Guardado</div>
+      </div>
+    </div>
+
+    <div class="item item-cancion">
+      <div class="item-row"><span class="item-time">3:20</span><div class="item-body"><div class="item-title">Canción 81 y anuncios</div></div></div>
+    </div>
+
+    <div class="item" onclick="toggleItem(this, 's8')">
+      <div class="item-row">
+        <span class="item-time">3:30</span>
+        <div class="item-body">
+          <div class="item-tag tag-discurso">Discurso</div>
+          <div class="item-title">¿Por qué se angustian? <span class="note-indicator" id="ni-s8"></span></div>
+          <div class="item-ref">Mat. 6:19-33</div>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="note-area" id="na-s8">
+        <div class="note-label">📝 Mis notas</div>
+        <textarea class="nota" id="nota-s8" placeholder="Escribe tus apuntes aquí..." oninput="saveNote('s8')"></textarea>
+        <div class="note-saved" id="saved-s8">✓ Guardado</div>
+      </div>
+    </div>
+
+    <div class="item" onclick="toggleItem(this, 's9')">
+      <div class="item-row">
+        <span class="item-time">3:55</span>
+        <div class="item-body">
+          <div class="item-tag tag-discurso">Discurso</div>
+          <div class="item-title">"Entren por la puerta angosta" <span class="note-indicator" id="ni-s9"></span></div>
+          <div class="item-ref">Mat. 7:1-5, 12-14, 16-18, 24-27</div>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="note-area" id="na-s9">
+        <div class="note-label">📝 Mis notas</div>
+        <textarea class="nota" id="nota-s9" placeholder="Escribe tus apuntes aquí..." oninput="saveNote('s9')"></textarea>
+        <div class="note-saved" id="saved-s9">✓ Guardado</div>
+      </div>
+    </div>
+
+    <div class="item item-cancion">
+      <div class="item-row"><span class="item-time">4:30</span><div class="item-body"><div class="item-title">Canción 21 y oración de conclusión</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DOMINGO ============ -->
+<div id="panel-domingo" class="day-panel">
+
+  <div class="session">
+    <div class="session-header manana">☀️ Mañana</div>
+
+    <div class="item item-cancion">
+      <div class="item-row"><span class="item-time">9:20</span><div class="item-body"><div class="item-title">Video musical</div></div></div>
+    </div>
+    <div class="item item-cancion">
+      <div class="item-row"><span class="item-time">9:30</span><div class="item-body"><div class="item-title">Canción 68 y oración</div></div></div>
+    </div>
+
+    <div class="item" onclick="toggleItem(this, 'd1')">
+      <div class="item-row">
+        <span class="item-time">9:40</span>
+        <div class="item-body">
+          <div class="item-tag tag-serie">Serie de Discursos</div>
+          <div class="item-title">Lecciones de las comparaciones de Jesús <span class="note-indicator" id="ni-d1"></span></div>
+          <ul class="item-bullets">
+            <li>Los cuatro tipos de terreno <span>(Mat. 13:18-23)</span></li>
+            <li>El trigo y la mala hierba <span>(Mat. 13:24-30)</span></li>
+            <li>El grano de mostaza <span>(Mat. 13:31,32)</span></li>
+            <li>La levadura <span>(Mat. 13:33)</span></li>
+            <li>La red de pesca <span>(Mat. 13:47-50)</span></li>
+          </ul>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="note-area" id="na-d1">
+        <div class="note-label">📝 Mis notas</div>
+        <textarea class="nota" id="nota-d1" placeholder="Escribe tus apuntes aquí..." oninput="saveNote('d1')"></textarea>
+        <div class="note-saved" id="saved-d1">✓ Guardado</div>
+      </div>
+    </div>
+
+    <div class="item item-cancion">
+      <div class="item-row"><span class="item-time">11:00</span><div class="item-body"><div class="item-title">Canción 64 y anuncios</div></div></div>
+    </div>
+
+    <div class="item" onclick="toggleItem(this, 'd2')">
+      <div class="item-row">
+        <span class="item-time">11:10</span>
+        <div class="item-body">
+          <div class="item-tag tag-publico">Discurso Público</div>
+          <div class="item-title">¿Ha encontrado el tesoro? <span class="note-indicator" id="ni-d2"></span></div>
+          <div class="item-ref">Mat. 13:44-46</div>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="note-area" id="na-d2">
+        <div class="note-label">📝 Mis notas</div>
+        <textarea class="nota" id="nota-d2" placeholder="Escribe tus apuntes aquí..." oninput="saveNote('d2')"></textarea>
+        <div class="note-saved" id="saved-d2">✓ Guardado</div>
+      </div>
+    </div>
+
+    <div class="item" onclick="toggleItem(this, 'd3')">
+      <div class="item-row">
+        <span class="item-time">11:40</span>
+        <div class="item-body">
+          <div class="item-tag tag-discurso">Resumen</div>
+          <div class="item-title">Resumen de La Atalaya <span class="note-indicator" id="ni-d3"></span></div>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="note-area" id="na-d3">
+        <div class="note-label">📝 Mis notas</div>
+        <textarea class="nota" id="nota-d3" placeholder="Escribe tus apuntes aquí..." oninput="saveNote('d3')"></textarea>
+        <div class="note-saved" id="saved-d3">✓ Guardado</div>
+      </div>
+    </div>
+
+    <div class="item item-cancion">
+      <div class="item-row"><span class="item-time">12:10</span><div class="item-body"><div class="item-title">Canción 140 e intermedio</div></div></div>
+    </div>
+  </div>
+
+  <div class="session">
+    <div class="session-header tarde">🌤️ Tarde</div>
+
+    <div class="item item-cancion">
+      <div class="item-row"><span class="item-time">1:35</span><div class="item-body"><div class="item-title">Video musical</div></div></div>
+    </div>
+    <div class="item item-cancion">
+      <div class="item-row"><span class="item-time">1:45</span><div class="item-body"><div class="item-title">Canción 108</div></div></div>
+    </div>
+
+    <div class="item" onclick="toggleItem(this, 'd4')">
+      <div class="item-row">
+        <span class="item-time">1:50</span>
+        <div class="item-body">
+          <div class="item-tag tag-av">Producción Audiovisual</div>
+          <div class="item-title">Las buenas noticias según Jesús: Ep. 6 — "¿Eres tú el que tiene que venir?" <span class="note-indicator" id="ni-d4"></span></div>
+          <div class="item-ref">Mat. 8:5-13; 11:2-30; 12:22-13:53; Mar. 3:19-4:34; Luc. 7:1-8:21</div>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="note-area" id="na-d4">
+        <div class="note-label">📝 Mis notas</div>
+        <textarea class="nota" id="nota-d4" placeholder="Escribe tus apuntes aquí..." oninput="saveNote('d4')"></textarea>
+        <div class="note-saved" id="saved-d4">✓ Guardado</div>
+      </div>
+    </div>
+
+    <div class="item item-cancion">
+      <div class="item-row"><span class="item-time">2:35</span><div class="item-body"><div class="item-title">Canción 120 y anuncios</div></div></div>
+    </div>
+
+    <div class="item" onclick="toggleItem(this, 'd5')">
+      <div class="item-row">
+        <span class="item-time">2:45</span>
+        <div class="item-body">
+          <div class="item-tag tag-discurso">Repaso</div>
+          <div class="item-title">¿Qué hemos aprendido? <span class="note-indicator" id="ni-d5"></span></div>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="note-area" id="na-d5">
+        <div class="note-label">📝 Mis notas</div>
+        <textarea class="nota" id="nota-d5" placeholder="Escribe tus apuntes aquí..." oninput="saveNote('d5')"></textarea>
+        <div class="note-saved" id="saved-d5">✓ Guardado</div>
+      </div>
+    </div>
+
+    <div class="item" onclick="toggleItem(this, 'd6')">
+      <div class="item-row">
+        <span class="item-time">2:55</span>
+        <div class="item-body">
+          <div class="item-tag tag-discurso">Discurso de Cierre</div>
+          <div class="item-title">"Felices los ojos de ustedes, que ven" <span class="note-indicator" id="ni-d6"></span></div>
+          <div class="item-ref">Mat. 7:1-5; 13:16,17; Luc. 6:46-49; 10:21; Juan 17:6; Sant. 1:22-25</div>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="note-area" id="na-d6">
+        <div class="note-label">📝 Mis notas</div>
+        <textarea class="nota" id="nota-d6" placeholder="Escribe tus apuntes aquí..." oninput="saveNote('d6')"></textarea>
+        <div class="note-saved" id="saved-d6">✓ Guardado</div>
+      </div>
+    </div>
+
+    <div class="item item-cancion">
+      <div class="item-row"><span class="item-time">3:45</span><div class="item-body"><div class="item-title">Canción 163 y oración de conclusión</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM BAR -->
+<div class="bottom-bar">
+  <div class="bottom-info">
+    <span id="notes-count">0 notas guardadas</span>
+  </div>
+  <button class="btn-clear" onclick="openModal()">Borrar todo</button>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h3>¿Borrar todas las notas?</h3>
+    <p>Esta acción eliminará permanentemente todas tus notas. No se puede deshacer.</p>
+    <div class="modal-btns">
+      <button class="btn-cancel-modal" onclick="closeModal()">Cancelar</button>
+      <button class="btn-confirm-modal" onclick="clearAll()">Borrar todo</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const PREFIX = 'asamblea2026_';
+  const allIds = ['v1','v2','v3','v4','v5','v6','s1','s2','s3','s4','s5','s6','s7','s8','s9','d1','d2','d3','d4','d5','d6'];
+
+  function showDay(day) {
+    document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + day).classList.add('active');
+    event.currentTarget.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function toggleItem(el, id) {
+    const isOpen = el.classList.contains('open');
+    el.classList.toggle('open', !isOpen);
+    const na = document.getElementById('na-' + id);
+    na.classList.toggle('open', !isOpen);
+    if (!isOpen) {
+      const nota = document.getElementById('nota-' + id);
+      nota.focus();
+    }
+  }
+
+  let saveTimers = {};
+  function saveNote(id) {
+    const val = document.getElementById('nota-' + id).value;
+    localStorage.setItem(PREFIX + id, val);
+    clearTimeout(saveTimers[id]);
+    const saved = document.getElementById('saved-' + id);
+    saved.style.display = 'block';
+    saveTimers[id] = setTimeout(() => { saved.style.display = 'none'; }, 1500);
+    updateNoteIndicators();
+    updateCount();
+  }
+
+  function updateNoteIndicators() {
+    allIds.forEach(id => {
+      const val = localStorage.getItem(PREFIX + id) || '';
+      const ni = document.getElementById('ni-' + id);
+      if (ni) ni.textContent = val.trim() ? '📌' : '';
+    });
+  }
+
+  function updateCount() {
+    const count = allIds.filter(id => (localStorage.getItem(PREFIX + id) || '').trim()).length;
+    document.getElementById('notes-count').textContent = count === 0 ? 'Sin notas aún' : count + (count === 1 ? ' nota guardada' : ' notas guardadas');
+  }
+
+  function loadNotes() {
+    allIds.forEach(id => {
+      const val = localStorage.getItem(PREFIX + id);
+      if (val) {
+        const el = document.getElementById('nota-' + id);
+        if (el) el.value = val;
+      }
+    });
+    updateNoteIndicators();
+    updateCount();
+  }
+
+  function openModal() { document.getElementById('modal').classList.add('open'); }
+  function closeModal() { document.getElementById('modal').classList.remove('open'); }
+  function clearAll() {
+    allIds.forEach(id => {
+      localStorage.removeItem(PREFIX + id);
+      const el = document.getElementById('nota-' + id);
+      if (el) el.value = '';
+    });
+    closeModal();
+    updateNoteIndicators();
+    updateCount();
+  }
+
+  loadNotes();
+</script>
+</body>
+</html>
